@@ -15,7 +15,7 @@ public class Parser {
   private String inputString;
 
   public Parser(String inputString) {
-    this.inputString = inputString.replace("%23","/");
+    this.inputString = inputString.replace("%24","/");
   }
 
   /**
