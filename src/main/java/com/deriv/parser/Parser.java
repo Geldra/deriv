@@ -15,6 +15,7 @@ public class Parser {
   private String inputString;
 
   public Parser(String inputString) {
+    System.out.print("I got this: \""+inputString + "\"");
     this.inputString = inputString.replace("%24","/");
   }
 
