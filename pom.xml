@@ -8,49 +8,55 @@
     <artifactId>deriv</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <build>
+<build>
         <plugins>
-            <!-- configures junit5 to work with maven, needed for Travis -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.21.0</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.junit.platform</groupId>
-                        <artifactId>junit-platform-surefire-provider</artifactId>
-                        <version>1.2.0-M1</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.junit.jupiter</groupId>
-                        <artifactId>junit-jupiter-engine</artifactId>
-                        <version>5.2.0-M1</version>
-                    </dependency>
-                </dependencies>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
-
-            <!-- allows us to test code coverage with codecov -->
+            <!-- Maven Shade Plugin -->
             <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.4.3</version>
+                <configuration>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                    <!-- Additional configuration. -->
+                </configuration>
                 <executions>
+                    <!-- Run shade goal on package phase -->
                     <execution>
+                        <phase>package</phase>
                         <goals>
-                            <goal>prepare-agent</goal>
+                            <goal>shade</goal>
                         </goals>
-                    </execution>
-                    <execution>
-                        <id>report</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
+                        <configuration>
+                            <transformers>
+                                <!-- add Main-Class to manifest file -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.deriv.server.Server</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
         </plugins>
-    </build>
-
+</build>
     <properties>
         <!-- builds with Java8 -->
         <maven.compiler.source>1.8</maven.compiler.source>
