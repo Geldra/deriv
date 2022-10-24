@@ -15,7 +15,7 @@ public class Parser {
   private String inputString;
 
   public Parser(String inputString) {
-    this.inputString = inputString.replaceAll(";","/");
+    this.inputString = inputString.replaceAll("\\$","/");
   }
 
   /**
