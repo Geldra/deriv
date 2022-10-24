@@ -15,7 +15,7 @@ public class Parser {
   private String inputString;
 
   public Parser(String inputString) {
-    this.inputString = inputString.replace("%E2%82%AC","/");
+    this.inputString = inputString.replace("\\","/");
   }
 
   /**
