@@ -16,8 +16,8 @@ public class Parser {
 
   public Parser(String inputString) {
     System.out.print("I got this: \""+inputString + "\"");
-    this.inputString = inputString.replaceAll("\$","/");
-    System.out.print("Passing this down the line: \""+inputString.replaceAll("\$","/") + "\"");
+    this.inputString = inputString.replaceAll("\\$","/");
+    System.out.print("Passing this down the line: \""+inputString.replaceAll("\\$","/") + "\"");
   }
 
   /**
