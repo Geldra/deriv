@@ -1,7 +1,4 @@
-# This workflow will build a Java project with Maven, and cache/restore any dependencies to improve the workflow execution time
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-java-with-maven
-
-name: Java CI with Maven
+name: Java CI with Maven and systemd
 
 on:
   push:
@@ -15,7 +12,9 @@ jobs:
     runs-on: self-hosted
 
     steps:
+    - continue-on-error: true
+      run: sudo systemctl is-active deriv && sudo systemctl stop deriv
     - uses: actions/checkout@v3
     - name: Build with Maven
       run: mvn clean install -U
-    - run: /usr/lib/jvm/java-8-openjdk-amd64/bin/java -jar ./target/deriv-1.0-SNAPSHOT.jar
+    - run: sudo systemctl start deriv
