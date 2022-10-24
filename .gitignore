@@ -30,3 +30,6 @@ hs_err_pid*
 
 # target
 target
+
+test.sh
+dependency-reduced-pom.xml
