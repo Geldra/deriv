@@ -22,7 +22,7 @@ public class Server {
   /**
    * Returns a JSON object error message.
    */
-  static  JSONObject error(Response res) {
+  static JSONObject error(Response res) {
     res.status(400); // client error
     return jobject().put("error", "invalid input(s)");
   }
@@ -33,11 +33,11 @@ public class Server {
     String var = req.params(":var");
 
     return calc.differentiate(expr, var) // differentiate
-             .map(result -> diffObject(
-               result,
-               calc.toOExpression(expr).get(),
-               calc.toOVariable(var).get()))
-             .orElseGet(() -> error(res)); // error message, if unsuccessful
+        .map(result -> diffObject(
+            result,
+            calc.toOExpression(expr).get(),
+            calc.toOVariable(var).get()))
+        .orElseGet(() -> error(res)); // error message, if unsuccessful
   }
 
   /**
@@ -45,13 +45,20 @@ public class Server {
    */
   private static JSONObject diffObject(Expression result, Expression expr, Variable var) {
     return jobject()
-             .put("data",
-               jobject()
-                 // the gets are checked, because oDeriv is checked
-                 .put("expression", expr.toLaTex())
-                 .put("result", result.toLaTex())
-                 .put("var", var.toLaTex())
-             );
+        .put("data",
+            jobject()
+                .put("plain",
+                    jobject()
+                        // the gets are checked, because oDeriv is checked
+                        .put("expression", expr.toString())
+                        .put("result", result.toString())
+                        .put("var", var.toString()))
+                .put("formatted",
+                    jobject()
+                        // the gets are checked, because oDeriv is checked
+                        .put("expression", expr.toLaTex())
+                        .put("result", result.toLaTex())
+                        .put("var", var.toLaTex())));
   }
 
   static JSONObject getEvaluation(Request req, Response res, Calculator calc) {
@@ -61,12 +68,12 @@ public class Server {
     String val = req.params(":val");
 
     return calc.evaluate(expr, var, val) // evaluate
-             .map(result -> evalObject( // create json object
-               result,
-               calc.toOExpression(expr).get(),
-               calc.toOVariable(var).get(),
-               calc.toOExpression(val).get()
-             )).orElseGet(() -> error(res)); // return an error if unsuccessful
+        .map(result -> evalObject( // create json object
+            result,
+            calc.toOExpression(expr).get(),
+            calc.toOVariable(var).get(),
+            calc.toOExpression(val).get()))
+        .orElseGet(() -> error(res)); // return an error if unsuccessful
   }
 
   /**
@@ -74,14 +81,22 @@ public class Server {
    */
   private static JSONObject evalObject(Expression result, Expression expr, Variable var, Expression val) {
     return jobject()
-             .put("data",
-               jobject()
-                 // the gets are checked, because oEval is checked
-                 .put("expression", expr.toLaTex())
-                 .put("result", result.toLaTex())
-                 .put("var", var.toLaTex())
-                 .put("val", val.toLaTex())
-             );
+        .put("data",
+            jobject()
+                .put("plain",
+                    jobject()
+                        // the gets are checked, because oDeriv is checked
+                        .put("expression", expr.toString())
+                        .put("result", result.toString())
+                        .put("var", var.toString())
+                        .put("val", val.toString()))
+                .put("formatted",
+                    jobject()
+                        // the gets are checked, because oDeriv is checked
+                        .put("expression", expr.toLaTex())
+                        .put("result", result.toLaTex())
+                        .put("var", var.toLaTex())
+                        .put("val", val.toLaTex())));
   }
 
   static JSONObject getSimplified(Request req, Response res, Calculator calc) {
@@ -90,24 +105,30 @@ public class Server {
 
     // simplify and return JSON object
     return calc.simplify(expr).map(result -> simplifyObject(result, expr))
-             .orElseGet(() -> error(res));
+        .orElseGet(() -> error(res));
   }
 
   /**
    * Returns a JSON object corresponding to the simplify route.
    *
    * @param result simplified result
-   * @param input string from url
+   * @param input  string from url
    * @return JSON object
    */
   private static JSONObject simplifyObject(Expression result, String input) {
     return jobject()
-             .put("data",
-               jobject()
-                 // the gets are checked, because oEval is checked
-                 .put("input", input)
-                 .put("result", result.toLaTex())
-             );
+        .put("data",
+            jobject()
+                .put("plain",
+                    jobject()
+                        // the gets are checked, because oEval is checked
+                        .put("input", input)
+                        .put("result", result.toString())
+                .put("formatted",
+                    jobject()
+                        // the gets are checked, because oEval is checked
+                        .put("input", input)
+                        .put("result", result.toLaTex()))));
   }
 
   /**
