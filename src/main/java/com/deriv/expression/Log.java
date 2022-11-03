@@ -13,7 +13,8 @@ import static com.deriv.expression.Mult.div;
 import static com.deriv.expression.ExpressionUtils.oGetFuture;
 
 /**
- * A log is the logarithm of an Expression. (I should note that throughout the code
+ * A log is the logarithm of an Expression. (I should note that throughout the
+ * code
  * base, I use log(a, b) to refer to a logarithm with base a and result b.)
  *
  * Data definition: a log is two Expressions (a base and a result).
@@ -39,7 +40,8 @@ public class Log implements Expression {
 
   /**
    * Static constructor for a logarithm.
-   * @param base of the log
+   * 
+   * @param base   of the log
    * @param result input of the log
    * @return new log
    */
@@ -56,6 +58,7 @@ public class Log implements Expression {
 
   /**
    * Static constructor for a natural logarithm.
+   * 
    * @param result input
    * @return new natural log
    */
@@ -83,12 +86,12 @@ public class Log implements Expression {
   @Override
   public String toString() {
     if ((this._result.isAdd() || this._result.isMult()) && this._base.equals(e())) {
-      return "ln" + this._result.toString();
+      return "ln(" + this._result.toString() + ")";
     }
 
     return (_base.equals(e()))
-               ? "ln(" + _result.toString() + ")"
-               : "log(" + _base.toString() + ", " + _result.toString() + ")";
+        ? "ln(" + _result.toString() + ")"
+        : "log(" + _base.toString() + ", " + _result.toString() + ")";
   }
 
   @Override
@@ -104,10 +107,10 @@ public class Log implements Expression {
     Future<Optional<Expression>> futureBase = ThreadManager.submitTask(() -> _result.evaluate(var, val));
 
     return _base.evaluate(var, val)
-               .flatMap(ba -> oGetFuture(futureBase)
-                       .flatMap(re -> re.isConstant() && re.asConstant().getVal() <= 0
-                               ? Optional.empty()
-                               : Optional.of(log(ba, re))));
+        .flatMap(ba -> oGetFuture(futureBase)
+            .flatMap(re -> re.isConstant() && re.asConstant().getVal() <= 0
+                ? Optional.empty()
+                : Optional.of(log(ba, re))));
   }
 
   @Override
