@@ -29,7 +29,8 @@ public class Mult implements Expression {
   private final List<Expression> _factors;
 
   /**
-   * Instantiates a Mult. Avoid using as much as possible! Use the easy constructor
+   * Instantiates a Mult. Avoid using as much as possible! Use the easy
+   * constructor
    * instead.
    */
   private Mult(List<Expression> factors) {
@@ -38,6 +39,7 @@ public class Mult implements Expression {
 
   /**
    * Static constructor for a Mult object.
+   * 
    * @param factors list of expressions
    * @return Expression
    */
@@ -45,12 +47,12 @@ public class Mult implements Expression {
     if (factors.isEmpty()) // can't allow this
       throw new RuntimeException("Don't instantiate a term with an empty list!");
 
-
     return new MultSimplifierComplete(shallowCopy(factors)).simplifyToExpression();
   }
 
   /**
    * Static constructor for a Mult object.
+   * 
    * @param factors array of expressions
    * @return Expression
    */
@@ -60,7 +62,8 @@ public class Mult implements Expression {
 
   /**
    * Static constructor for division.
-   * @param numerator input
+   * 
+   * @param numerator   input
    * @param denominator input
    * @return Expression
    */
@@ -70,6 +73,7 @@ public class Mult implements Expression {
 
   /**
    * Static method for negating an Expression (i.e. multiplying it by zero)
+   * 
    * @param expr input
    * @return Expression
    */
@@ -79,6 +83,7 @@ public class Mult implements Expression {
 
   /**
    * Getter method for the factors.
+   * 
    * @return factors
    */
   public List<Expression> getFactors() {
@@ -88,26 +93,26 @@ public class Mult implements Expression {
   @Override
   public Expression getConstantFactor() {
     List<Expression> constants = _factors.stream()
-                                    .filter(x -> x.isConstant()
-                                                     || (x.getBase().isConstant()
-                                                             && x.getExponent().equals(constant(-1))))
-                                    .collect(toList());
+        .filter(x -> x.isConstant()
+            || (x.getBase().isConstant()
+                && x.getExponent().equals(constant(-1))))
+        .collect(toList());
 
     return constants.isEmpty()
-               ? multID()
-               : mult(constants);
+        ? multID()
+        : mult(constants);
   }
 
   @Override
   public Expression getSymbolicFactors() {
     List<Expression> symbolic = _factors.stream()
-                                    .filter(x -> !x.isConstant()
-                                                     && !(x.getBase().isConstant()
-                                                             && x.getExponent().equals(constant(-1))))
-                                    .collect(toList());
+        .filter(x -> !x.isConstant()
+            && !(x.getBase().isConstant()
+                && x.getExponent().equals(constant(-1))))
+        .collect(toList());
     return symbolic.isEmpty()
-               ? multID()
-               : mult(symbolic);
+        ? multID()
+        : mult(symbolic);
   }
 
   @Override
@@ -115,23 +120,23 @@ public class Mult implements Expression {
     Expression constantFactor = this.getConstantFactor();
 
     return constantFactor.getNumerator().isNegative()
-               || constantFactor.getDenominator().isNegative();
+        || constantFactor.getDenominator().isNegative();
   }
 
   @Override
   public Expression getNumerator() {
     List<Expression> num = _factors.stream()
-                               .filter(x -> !x.getExponent().isNegative())
-                               .collect(toList());
+        .filter(x -> !x.getExponent().isNegative())
+        .collect(toList());
     return num.isEmpty() ? multID() : mult(num);
   }
 
   @Override
   public Expression getDenominator() {
     List<Expression> den = _factors.stream()
-                               .filter(x -> x.getExponent().isNegative())
-                               .map(y -> poly(y, -1))
-                               .collect(toList());
+        .filter(x -> x.getExponent().isNegative())
+        .map(y -> poly(y, -1))
+        .collect(toList());
 
     return den.isEmpty() ? multID() : mult(den);
   }
@@ -165,10 +170,10 @@ public class Mult implements Expression {
     }
 
     return "("
-             + _factors.stream()
-                 .map(Expression::toString)
-                 .collect(joining(" * "))
-             + ")";
+        + _factors.stream()
+            .map(Expression::toString)
+            .collect(joining(" * "))
+        + ")";
   }
 
   @Override
@@ -181,10 +186,9 @@ public class Mult implements Expression {
       // probably the easiest way to write this
       return "\\frac{" + num.toLaTex() + "}{" + den.toLaTex() + "}";
     }
-
-    return _factors.stream() //  sublist is O(1)
-             .map(ex -> ex.isAdd() ? "(" + ex.toLaTex() + ")" : ex.toLaTex())
-             .collect(joining());
+    return _factors.stream() // sublist is O(1)
+        .map(ex -> ex.isAdd() ? "(" + ex.toLaTex() + ")" : ex.toLaTex())
+        .collect(joining("*"));
   }
 
   @Override
@@ -224,8 +228,9 @@ public class Mult implements Expression {
 
     /**
      * Private constructor for a ParallelMultDerivative.
+     * 
      * @param factorList input list of expressions
-     * @param var with respect to
+     * @param var        with respect to
      */
     private ParallelMultDerivative(List<Expression> factorList, Variable var) {
       this.factorList = factorList;
@@ -246,18 +251,16 @@ public class Mult implements Expression {
       // compute derivatives
       RecursiveTask<Optional<Expression>> task = new ParallelMultDerivative(factorList.subList(0, mid), var);
       task.fork(); // fork the first derivative
-      Optional<Expression> secondDerivative
-        = new ParallelMultDerivative(factorList.subList(mid, factorList.size()), var).compute();
+      Optional<Expression> secondDerivative = new ParallelMultDerivative(factorList.subList(mid, factorList.size()),
+          var).compute();
       Optional<Expression> firstDerivative = task.join();
 
       // combine the derivatives together
       return firstDerivative
-               .flatMap(x -> secondDerivative
-                               .map(y ->
-                                      add(
-                                        mult(mult(factorList.subList(mid, factorList.size())), x),
-                                        mult(y, (mult(factorList.subList(0, mid))))
-                                      )));
+          .flatMap(x -> secondDerivative
+              .map(y -> add(
+                  mult(mult(factorList.subList(mid, factorList.size())), x),
+                  mult(y, (mult(factorList.subList(0, mid)))))));
     }
   }
 
@@ -267,6 +270,7 @@ public class Mult implements Expression {
   private static class MultSimplifierComplete extends MultSimplifier {
     /**
      * Constructor for a MultSimplifierComplete.
+     * 
      * @param unFactors input factors
      */
     MultSimplifierComplete(List<Expression> unFactors) {
@@ -277,19 +281,19 @@ public class Mult implements Expression {
     public Expression toExpression() {
       if (unFactors.size() == 2) {
         List<Expression> con = unFactors.stream()
-                                 .filter(Expression::isConstant)
-                                 .collect(toList());
+            .filter(Expression::isConstant)
+            .collect(toList());
 
         List<Expression> remain = unFactors.stream()
-                                    .filter(Expression::isAdd)
-                                    .collect(toList());
+            .filter(Expression::isAdd)
+            .collect(toList());
 
         if (con.size() == 1 && remain.size() == 1) {
           // distribute the constant among the terms
           return add(
-            remain.get(0).asAdd().getTerms().stream()
-              .map(x -> mult(con.get(0), x))
-              .collect(toList()));
+              remain.get(0).asAdd().getTerms().stream()
+                  .map(x -> mult(con.get(0), x))
+                  .collect(toList()));
         }
       }
 

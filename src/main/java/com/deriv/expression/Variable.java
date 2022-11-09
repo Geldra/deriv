@@ -35,6 +35,7 @@ public class Variable implements Expression {
   /**
    * Static constructor for a Variable. If you pass "e" or "π" as arguments to
    * this function, it will throw an error, as those are reserved variable names.
+   * 
    * @param var variable name
    * @return variable
    */
@@ -47,6 +48,7 @@ public class Variable implements Expression {
 
   /**
    * Static constructor for a variable with name "x".
+   * 
    * @return variable
    */
   public static Variable x() {
@@ -55,12 +57,13 @@ public class Variable implements Expression {
 
   /**
    * Static constructor for a variable with a name of the form "x_i1_..._in".
+   * 
    * @param nums indices
    * @return variable
    */
   public static Expression x(Integer... nums) {
     String varSubscript = Arrays.stream(nums).map(Objects::toString)
-                            .reduce("", (a, b) -> a + "_" + b);
+        .reduce("", (a, b) -> a + "_" + b);
     return var("x" + varSubscript);
   }
 
@@ -71,7 +74,6 @@ public class Variable implements Expression {
 
     if (!(o instanceof Variable))
       return false;
-
 
     Variable var = (Variable) o;
     return var._var.equals(this._var);
