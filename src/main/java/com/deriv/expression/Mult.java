@@ -188,7 +188,7 @@ public class Mult implements Expression {
     }
     return _factors.stream() // sublist is O(1)
         .map(ex -> ex.isAdd() ? "(" + ex.toLaTex() + ")" : ex.toLaTex())
-        .collect(joining("*"));
+        .collect(joining("\\cdot "));
   }
 
   @Override
